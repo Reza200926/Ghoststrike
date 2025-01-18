@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="login-container">
+        <h2>Login</h2>
+
+        <label for="login-email">Email:</label><br>
+        <input type="email" id="login-email" required><br><br>
+
+        <label for="login-password">Password:</label><br>
+        <input type="password" id="login-password" required><br><br>
+
+        <button onclick="login()">Login</button>
+        <button onclick="goToRegister()">Go to Register</button>
+    </div>
+
+    <script>
+        // Function for login
+        function login() {
+            let email = document.getElementById('login-email').value;
+            let password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Retrieve users from localStorage
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let user = users.find(user => user.email === email && user.password === password);
+
+            if (!user) {
+                alert('Invalid email or password!');
+                return;
+            }
+
+            // Store logged-in user data
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+            // Redirect to lobby after successful login
+            window.location.href = 'lobby.html';
+        }
+
+        // Function to go to register page
+        function goToRegister() {
+            window.location.href = 'register.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="history-container">
+        <h2>History</h2>
+
+        <h3>Registration History:</h3>
+        <ul id="registration-history"></ul>
+
+        <h3>Login History:</h3>
+        <ul id="login-history"></ul>
+        
+        <button onclick="clearHistory()">Clear History</button>
+    </div>
+
+    <script>
+        // Function to display history
+        window.onload = function() {
+            let registrationHistory = JSON.parse(localStorage.getItem('registrationHistory')) || [];
+            let loginHistory = JSON.parse(localStorage.getItem('loginHistory')) || [];
+
+            let registrationList = document.getElementById('registration-history');
+            let loginList = document.getElementById('login-history');
+
+            // Display registration history
+            registrationHistory.forEach(item => {
+                let li = document.createElement('li');
+                li.textContent = `Email: ${item.email}, Nickname: ${item.nickname}`;
+                registrationList.appendChild(li);
+            });
+
+            // Display login history
+            loginHistory.forEach(item => {
+                let li = document.createElement('li');
+                li.textContent = `Email: ${item.email}, Login Time: ${item.time}`;
+                loginList.appendChild(li);
+            });
+        };
+
+        // Clear history
+        function clearHistory() {
+            localStorage.removeItem('registrationHistory');
+            localStorage.removeItem('loginHistory');
+            alert('History cleared!');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

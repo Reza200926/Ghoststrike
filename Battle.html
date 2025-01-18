@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Game - Pertarungan</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 50px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        /* Background map 2D */
+        .battle-container {
+            position: relative;
+            background-image: url('assets/images/battlefield.jpg');
+            background-size: cover;
+            height: 400px;
+            width: 80%;
+            margin: 0 auto;
+            border-radius: 15px;
+        }
+
+        .character-battle {
+            position: absolute;
+            bottom: 20px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .player-character {
+            left: 50px;
+        }
+
+        .npc-character {
+            right: 50px;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+        }
+
+        .game-button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .game-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Pop-up Victory/Defeat */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .popup h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .popup .button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .popup .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Health bars */
+        .health-bar {
+            height: 20px;
+            width: 200px;
+            border-radius: 10px;
+            margin: 10px auto;
+            background-color: #ddd;
+        }
+
+        .health-bar span {
+            display: block;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .player-health {
+            background-color: #4CAF50;
+        }
+
+        .npc-health {
+            background-color: #FF5733;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Pertarungan Dimulai!</h2>
+
+    <div class="battle-container">
+        <div class="character-battle player-character" id="player-character">
+            <img src="" alt="Player Character" />
+        </div>
+
+        <div class="character-battle npc-character" id="npc-character">
+            <img src="assets/images/npc.png" alt="NPC Character" />
+        </div>
+    </div>
+
+    <!-- Health Bars -->
+    <div id="player-health-bar" class="health-bar">
+        <span class="player-health" style="width: 100%"></span>
+    </div>
+
+    <div id="npc-health-bar" class="health-bar">
+        <span class="npc-health" style="width: 100%"></span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="game-button" onclick="attack()">Attack</button>
+        <button class="game-button" onclick="defend()">Defend</button>
+        <button class="game-button" onclick="specialAttack()">Special Attack</button>
+    </div>
+
+    <!-- Result Pop-up -->
+    <div class="popup" id="result-popup">
+        <h3 id="result-message">Victory!</h3>
+        <button class="button" onclick="goBackToLobby()">Kembali ke Lobby</button>
+    </div>
+
+    <script>
+        let playerCharacter = localStorage.getItem('selectedCharacter') || 'warrior'; // Get character from localStorage
+        let npcHP = 100;
+        let playerHP = 100;
+        let gameOver = false;
+
+        // Set player character image based on selected character
+        function setCharacterImage(character) {
+            let imagePath = '';
+            if (character === 'warrior') {
+                imagePath = 'assets/images/warrior.png';
+            } else if (character === 'mage') {
+                imagePath = 'assets/images/mage.png';
+            } else if (character === 'archer') {
+                imagePath = 'assets/images/archer.png';
+            }
+            document.getElementById("player-character").innerHTML = `<img src="${imagePath}" alt="${character}">`;
+        }
+
+        // Set NPC image (default NPC for now)
+        function setNpcImage() {
+            document.getElementById("npc-character").innerHTML = `<img src="assets/images/npc.png" alt="NPC">`;
+        }
+
+        // Function to handle attack
+        function attack() {
+            if (gameOver) return;
+
+            const damage = Math.floor(Math.random() * 20) + 10;
+            npcHP -= damage;
+            updateHealthBars();
+            document.getElementById("result-message").textContent = `You dealt ${damage} damage to the NPC!`;
+
+            if (npcHP <= 0) {
+                document.getElementById("result-message").textContent = "You defeated the NPC!";
+                endGame('win');
+            }
+        }
+
+        // Function to handle defense
+        function defend() {
+            if (gameOver) return;
+
+            const damage = Math.floor(Math.random() * 15) + 5;
+            playerHP -= Math.floor(damage / 2); // Defend reduces damage
+            updateHealthBars();
+            document.getElementById("result-message").textContent = `You defended! NPC dealt ${Math.floor(damage / 2)} damage.`;
+
+            if (playerHP <= 0) {
+                document.getElementById("result-message").textContent = "You lost the battle!";
+                endGame('lose');
+            }
+        }
+
+        // Function for special attack
+        function specialAttack() {
+            if (gameOver) return;
+
+            const damage = Math.floor(Math.random() * 40) + 20;
+            npcHP -= damage;
+            updateHealthBars();
+            document.getElementById("result-message").textContent = `Special Attack! You dealt ${damage} damage to the NPC!`;
+
+            if (npcHP <= 0) {
+                document.getElementById("result-message").textContent = "You defeated the NPC with a special attack!";
+                endGame('win');
+            }
+        }
+
+        // Function to update health bars
+        function updateHealthBars() {
+            document.querySelector(".player-health").style.width = `${playerHP}%`;
+            document.querySelector(".npc-health").style.width = `${npcHP}%`;
+        }
+
+        // Function to end the game
+        function endGame(result) {
+            gameOver = true;
+            document.getElementById("result-popup").style.display = 'block';
+            
+            // Update leaderboard if player wins
+            if (result === 'win') {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const player = users.find(user => user.nickname === localStorage.getItem('nickname'));
+                if (player) {
+                    player.level += 1; // Increase level by 1
+                    localStorage.setItem('users', JSON.stringify(users));  // Update localStorage
+                }
+            }
+        }
+
+        // Function to go back to the lobby
+        function goBackToLobby() {
+            window.location.href = 'lobby.html'; // Redirect to the lobby
+        }
+
+        // Initialize game
+        window.onload = function() {
+            setCharacterImage(playerCharacter);
+            setNpcImage();
+        };
+    </script>
+
+</body>
+</html>

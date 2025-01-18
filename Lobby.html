@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Game - Lobby</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header Styles */
+        header {
+            width: 100%;
+            background-color: #004d40;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Section */
+        .main-content {
+            width: 80%;
+            max-width: 1000px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .user-info {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        /* Leaderboard Section */
+        .leaderboard {
+            margin-top: 30px;
+        }
+
+        .leaderboard h2 {
+            margin-bottom: 20px;
+            color: #004d40;
+        }
+
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .leaderboard th, .leaderboard td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .leaderboard th {
+            background-color: #00796b;
+            color: white;
+        }
+
+        .leaderboard td {
+            background-color: #f1f1f1;
+        }
+
+        .leaderboard tr:nth-child(even) {
+            background-color: #e0f2f1;
+        }
+
+        .leaderboard tr:hover {
+            background-color: #b2dfdb;
+        }
+
+        .game-button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .game-button:hover {
+            background-color: #004d40;
+        }
+
+        .footer {
+            margin-top: 40px;
+            background-color: #004d40;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer a {
+            color: #ffeb3b;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Welcome to the RPG Lobby!</h1>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+
+        <!-- Display User Info -->
+        <div class="user-info" id="user-info">
+            <h2>Player Information</h2>
+            <p><strong>Nickname:</strong> <span id="nickname"></span></p>
+            <p><strong>Level:</strong> <span id="user-level"></span></p>
+            <p><strong>EXP:</strong> <span id="user-exp"></span></p>
+            <p><strong>Score:</strong> <span id="user-score"></span></p>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <table id="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Nickname</th>
+                        <th>Level</th>
+                        <th>EXP</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Top 10 leaderboard will be inserted here -->
+                </tbody>
+            </table>
+            <button class="game-button" onclick="playGame()">Play Game</button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>&copy; 2025 RPG Game | <a href="index.html">Logout</a></p>
+    </div>
+
+    <script>
+        // Function to retrieve user data from localStorage
+        function getUserData() {
+            const nickname = localStorage.getItem('nickname');
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(user => user.nickname === nickname);
+            return user || {};
+        }
+
+        // Function to display user info
+        function displayUserInfo() {
+            const user = getUserData();
+            if (user.nickname) {
+                document.getElementById('nickname').textContent = user.nickname;
+                document.getElementById('user-level').textContent = user.level || 1;
+                document.getElementById('user-exp').textContent = user.exp || 0;
+                document.getElementById('user-score').textContent = user.score || 0;
+            } else {
+                window.location.href = 'login.html'; // Redirect to login if no user data
+            }
+        }
+
+        // Function to display the leaderboard (Top 10 players)
+        function displayLeaderboard() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const sortedUsers = users.sort((a, b) => b.score - a.score || b.streak - a.streak); // Sort by score and streak
+            const leaderboardTable = document.getElementById('leaderboard-table').getElementsByTagName('tbody')[0];
+
+            leaderboardTable.innerHTML = ''; // Clear the table first
+
+            // Add top 10 players to the table
+            sortedUsers.slice(0, 10).forEach((user, index) => {
+                const row = leaderboardTable.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.nickname}</td>
+                    <td>${user.level}</td>
+                    <td>${user.exp}</td>
+                    <td>${user.score}</td>
+                `;
+            });
+        }
+
+        // Function to handle play button click
+        function playGame() {
+            window.location.href = 'game.html'; // Redirect to game page
+        }
+
+        // Initialize leaderboard and user info when the page loads
+        window.onload = function() {
+            displayUserInfo();
+            displayLeaderboard();
+        };
+    </script>
+
+</body>
+</html>

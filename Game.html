@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Game - Pilih Karakter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 50px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .character-selection {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .character-card {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .character-card:hover {
+            transform: scale(1.05);
+        }
+
+        .character-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+
+        .character-card p {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .game-button {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .game-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Pilih Karakter untuk Bertarung!</h2>
+
+    <!-- Character Selection -->
+    <div class="character-selection">
+        <div class="character-card" onclick="selectCharacter('warrior')">
+            <img src="assets/images/warrior.png" alt="Warrior">
+            <p>Warrior</p>
+        </div>
+
+        <div class="character-card" onclick="selectCharacter('mage')">
+            <img src="assets/images/mage.png" alt="Mage">
+            <p>Mage</p>
+        </div>
+
+        <div class="character-card" onclick="selectCharacter('archer')">
+            <img src="assets/images/archer.png" alt="Archer">
+            <p>Archer</p>
+        </div>
+    </div>
+
+    <!-- Button to start battle -->
+    <div>
+        <button class="game-button" id="start-game-btn" disabled onclick="startGame()">Start Game</button>
+    </div>
+
+    <script>
+        let selectedCharacter = '';
+
+        // Function to select a character
+        function selectCharacter(character) {
+            selectedCharacter = character;
+            document.getElementById("start-game-btn").disabled = false;
+            console.log(`Selected character: ${selectedCharacter}`);
+        }
+
+        // Function to start the game (redirect to battle page)
+        function startGame() {
+            if (selectedCharacter) {
+                localStorage.setItem('selectedCharacter', selectedCharacter); // Store selected character in localStorage
+                window.location.href = 'battle.html'; // Redirect to battle page
+            }
+        }
+    </script>
+
+</body>
+</html>
