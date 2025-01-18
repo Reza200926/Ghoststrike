@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lobby & Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="lobby">
+  <h1>Game Lobby</h1>
+  
+  <!-- Nickname -->
+  <input type="text" id="nickname" placeholder="Enter your nickname">
+
+  <!-- Karakter -->
+  <div id="character-selection">
+    <h2>Character Selection</h2>
+    <div class="characters">
+      <img src="warrior.png" class="character" data-character="warrior" />
+      <img src="ninja.png" class="character" data-character="ninja" />
+      <img src="mage.png" class="character" data-character="mage" />
+    </div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard-list"></ul>
+  </div>
+
+  <!-- Player Stats -->
+  <div id="player-stats">
+    <h2>Player Stats</h2>
+    <p>Level: <span id="player-level">1</span></p>
+    <p>Score: <span id="player-score">0</span></p>
+  </div>
+
+  <!-- Start Button -->
+  <button id="start-game">Start Game</button>
+</div>
+
+  <script src="lobby.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
